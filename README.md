@@ -155,7 +155,9 @@ private void LoadSecuritylist()
 ### 生成安全文件
 
 ```
- bool success = validator.GenerateSecuritylist(AllowedUsers: 用户数组,AllowedMachines: 机器码数组,enableSoftware: 是否启用);
+ bool success = validator.GenerateSecuritylist(AllowedUsers: 用户数组,
+                AllowedMachines: 机器码数组,
+                enableSoftware: 是否启用);
 ```
 调用实例：
 ```
