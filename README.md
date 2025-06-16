@@ -1,6 +1,6 @@
 # SecurityLibrary.dll 使用手册
 
-首先程序集引用 SecurityLibrary.dll 并在程序用 using SecurityLibrary;
+首先程序集引用 SecurityLibrary.dll 并在程序中引用 using SecurityLibrary;
 
 如果使用中报错，请使用相同的方式引用 Newtonsoft.Json.dll
 
@@ -18,11 +18,14 @@ Security validator = new();
 ```
 调用方法：
 ```
-Security.EncryptionKey = "你获取到的加密盐值";	//	设置加密盐值，可以从配置文件读取更安全
+// 设置加密盐值，可以从配置文件读取更安全
+Security.EncryptionKey = "你获取到的加密盐值";	
 ```
 
 
-### 黑名单验证 返回布尔值 用户和机器码两者填写其一即可，或者都填写也行，软件会自动识别其中一项
+### 黑名单验证 返回布尔值 
+
+用户和机器码两者填写其一即可，或者都填写也行，软件会自动识别其中一项
 
 ```
 var result = validator.Blacklist(userToCheck: 你的软件用户,machineToCheck: 机器码); 
@@ -37,14 +40,18 @@ private void btnBlacklistValidate_Click(object sender, EventArgs e)
         var (_, _, isEnabled) = validator.ReadSecuritylist();
         if (!isEnabled)
         {
-            MessageBox.Show("软件已被管理员禁用", "系统禁用", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            MessageBox.Show("软件已被管理员禁用", "系统禁用", 
+            MessageBoxButtons.OK, 
+            MessageBoxIcon.Stop);
             return;
         }
 
         // 输入验证
         if (string.IsNullOrWhiteSpace(txtUser.Text) && string.IsNullOrWhiteSpace(txtMachine.Text))
         {
-            MessageBox.Show("必须输入用户名或机器码进行验证", "输入错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("必须输入用户名或机器码进行验证", "输入错误", 
+            MessageBoxButtons.OK, 
+            MessageBoxIcon.Warning);
             return;
         }
 
@@ -57,22 +64,30 @@ private void btnBlacklistValidate_Click(object sender, EventArgs e)
         {
             // 验证失败处理
             MessageBox.Show(result.Message, "验证失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            MessageBox.Show("您的账户或设备已被禁止使用本软件\n请联系管理员获取帮助", "访问被拒绝", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            MessageBox.Show("您的账户或设备已被禁止使用本软件\n请联系管理员获取帮助", "访问被拒绝", 
+            MessageBoxButtons.OK, 
+            MessageBoxIcon.Stop);
             return;
         }
 
         // 验证通过后的处理
-        MessageBox.Show("验证通过，欢迎使用本系统", "验证成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show("验证通过，欢迎使用本系统", "验证成功", 
+        MessageBoxButtons.OK, 
+        MessageBoxIcon.Information);
         // 此处继续执行后续业务代码...
     }
     catch (Exception ex)
     {
-        MessageBox.Show($"系统错误: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show($"系统错误: {ex.Message}", "错误", 
+        MessageBoxButtons.OK, 
+        MessageBoxIcon.Error);
     }
 }
 ```
 
-### 白名单验证 返回布尔值 用户和机器码两者填写其一即可，或者都填写也行，软件会自动识别其中一项
+### 白名单验证 返回布尔值 
+
+用户和机器码两者填写其一即可，或者都填写也行，软件会自动识别其中一项
 
 ```
 var result = validator.Whitelist(userToCheck: 你的软件用户,machineToCheck: 机器码); 
@@ -87,14 +102,18 @@ private void btnWhitelistValidate_Click(object sender, EventArgs e)
         var (_, _, isEnabled) = validator.ReadSecuritylist();
         if (!isEnabled)
         {
-            MessageBox.Show("软件已被管理员禁用", "系统禁用", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            MessageBox.Show("软件已被管理员禁用", "系统禁用", 
+            MessageBoxButtons.OK, 
+            MessageBoxIcon.Stop);
             return;
         }
 
         // 输入验证
         if (string.IsNullOrWhiteSpace(txtUser.Text) && string.IsNullOrWhiteSpace(txtMachine.Text))
         {
-            MessageBox.Show("必须输入用户名或机器码进行验证", "输入错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("必须输入用户名或机器码进行验证", "输入错误", 
+            MessageBoxButtons.OK, 
+            MessageBoxIcon.Warning);
             return;
         }
 
@@ -105,17 +124,25 @@ private void btnWhitelistValidate_Click(object sender, EventArgs e)
 
         if (!result.IsValid)
         {
-            MessageBox.Show(result.Message, "验证失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            MessageBox.Show("您未被授权使用本系统\n请联系管理员添加您的账户或设备", "访问被拒绝", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            MessageBox.Show(result.Message, "验证失败", 
+            MessageBoxButtons.OK, 
+            MessageBoxIcon.Error);
+            MessageBox.Show("您未被授权使用本系统\n请联系管理员添加您的账户或设备", "访问被拒绝", 
+            MessageBoxButtons.OK, 
+            MessageBoxIcon.Stop);
             return;
         }
 
-        MessageBox.Show("验证通过，欢迎使用本系统", "验证成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show("验证通过，欢迎使用本系统", "验证成功", 
+        MessageBoxButtons.OK, 
+        MessageBoxIcon.Information);
         // 后续业务代码...
     }
     catch (Exception ex)
     {
-        MessageBox.Show($"系统错误: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show($"系统错误: {ex.Message}", "错误", 
+        MessageBoxButtons.OK, 
+        MessageBoxIcon.Error);
     }
 }
 ```
@@ -145,7 +172,9 @@ private void LoadSecuritylist()
         // 文件不存在时显示空内容，其他错误显示提示
         if (!(ex is System.IO.FileNotFoundException))
         {
-            MessageBox.Show($"加载安全文件失败: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show($"加载安全文件失败: {ex.Message}", "错误", 
+            MessageBoxButtons.OK, 
+            MessageBoxIcon.Warning);
         }
         statusLabel.Text = "未发现安全文件！";
     }
@@ -164,12 +193,14 @@ private void LoadSecuritylist()
 private void btnGenerate_Click(object sender, EventArgs e)
 {
     // 处理用户输入 - 按行分割并去除空白项
-    var users = txtUsers.Text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+    var users = txtUsers.Text.Split(new[] { Environment.NewLine }, 
+    StringSplitOptions.RemoveEmptyEntries)
         .Select(u => u.Trim())
         .Where(u => !string.IsNullOrEmpty(u))
         .ToArray();
 
-    var machines = txtMachines.Text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+    var machines = txtMachines.Text.Split(new[] { Environment.NewLine }, 
+    StringSplitOptions.RemoveEmptyEntries)
         .Select(m => m.Trim())
         .Where(m => !string.IsNullOrEmpty(m))
         .ToArray();
@@ -184,14 +215,16 @@ private void btnGenerate_Click(object sender, EventArgs e)
     if (success)
     {
         statusLabel.Text = "安全文件生成成功";
-        MessageBox.Show($"安全文件生成成功!{Environment.NewLine}文件已保存为Seccurity.enc",
-            "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show($"安全文件生成成功!{Environment.NewLine}文件已保存为 Seccurity.enc","成功", 
+        MessageBoxButtons.OK, 
+        MessageBoxIcon.Information);
     }
     else
     {
         statusLabel.Text = "安全文件生成失败";
-        MessageBox.Show("安全文件生成失败",
-            "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("安全文件生成失败","错误", 
+        MessageBoxButtons.OK, 
+        MessageBoxIcon.Error);
     }
 }
 ```

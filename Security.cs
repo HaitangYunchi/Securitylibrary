@@ -25,7 +25,7 @@ using Newtonsoft.Json;
 namespace SecurityLibrary
 {
     /// <summary>
-    /// 黑名单验证器主类
+    /// 安全验证主类
     /// </summary>
     public class Security
     {
@@ -35,7 +35,7 @@ namespace SecurityLibrary
         public static string EncryptionKey { get; set; } = "HaiTangYunchif&6ag2kFr%#*(&pjjR_gRH-yTutKg3LToV.7TIdOUoUNIkiLI_x";  //默认盐值，可以后期自定义获取该变量
 
         /// <summary>
-        /// 黑名单配置数据结构
+        /// 安全文件配置数据结构
         /// </summary>
         public class SecuritylistSettings
         {
@@ -190,11 +190,10 @@ namespace SecurityLibrary
         /// <summary>
         /// 生成安全文件
         /// </summary>
-        /// <param name="AllowedUsers:数组变量">用户名变量数组</param>
-        /// <param name="AllowedMachines:数组变量">机器码数组</param>
-        /// <param name="enableSoftware:true or false">是否启用</param>
+        /// <param name="AllowedUsers">用户数组 AllowedUsers:数组变量</param>
+        /// <param name="AllowedMachines">机器码数组 AllowedMachines:数组变量</param>
+        /// <param name="enableSoftware">是否启用</param>
         /// <param name="outputPath">安全文件路径，默认为"Seccurity.enc"</param>
-        /// <returns>
         public bool GenerateSecuritylist(
             string[] AllowedUsers,
             string[] AllowedMachines,
@@ -230,7 +229,8 @@ namespace SecurityLibrary
         {
             string data = string.Join(",", settings.AllowedUsers) +
                          string.Join(",", settings.AllowedMachines) +
-                         settings.EnableSoftware.ToString();
+                         settings.EnableSoftware.ToString() +
+                         CryptoHelper.GetBase64Fixed64CharString();
             return CryptoHelper.ComputeHash(data);
         }
     }

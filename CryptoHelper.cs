@@ -31,6 +31,8 @@ namespace SecurityLibrary
     {
         private static readonly byte[] Salt = [0x48, 0x61, 0x69, 0x54, 0x61, 0x6E, 0x67, 0x59, 0x75, 0x6E, 0x63, 0x68, 0x69, 0x53, 0x61, 0x76];
         private const int Iterations = 1000;
+        private static readonly byte[] BaseSalt = GenerateBaseSalt();
+        private static readonly byte[] ObfuscationKey = Encoding.UTF8.GetBytes("@6@jS~wI)h4MwWViajOom)tMvJ#E%8es");
 
         /// <summary>
         /// 加密字符串
@@ -84,14 +86,63 @@ namespace SecurityLibrary
             return Encoding.UTF8.GetString(ms.ToArray());
         }
 
-        /// <summary>
-        /// 计算SHA256哈希
-        /// </summary>
+        //计算SHA256哈希值      
         public static string ComputeHash(string input)
         {
-            using SHA256 sha256 = SHA256.Create();
-            byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
-            return BitConverter.ToString(bytes).Replace("-", "").ToLower();
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input), "输入字符串不能为null");
+            }
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+
+            // 创建带盐的输入缓冲区
+            byte[] buffer = new byte[inputBytes.Length + Salt.Length];
+            Buffer.BlockCopy(inputBytes, 0, buffer, 0, inputBytes.Length);
+            Buffer.BlockCopy(Salt, 0, buffer, inputBytes.Length, Salt.Length);
+
+            // 使用SHA256算法
+            using (var sha256 = SHA256.Create())
+            {
+                byte[] hashBytes = buffer;
+
+                // 迭代哈希增强安全性
+                for (int i = 0; i < Iterations; i++)
+                {
+                    hashBytes = sha256.ComputeHash(hashBytes);
+                }
+
+                // 高效转换为十六进制
+                var hexString = new StringBuilder(hashBytes.Length * 2);
+                foreach (byte b in hashBytes)
+                {
+                    hexString.Append(b.ToString("x2")); // 保证小写
+                }
+
+                return hexString.ToString();
+            }
         }
+
+        private static byte[] GenerateBaseSalt()
+        {
+            byte[] salt = new byte[48];
+            for (int i = 0; i < 48; i++)
+            {
+                salt[i] = (byte)((i * 31 + 7) % 256); // 确定性模式
+            }
+            return salt;
+        }
+
+        public static string GetBase64Fixed64CharString()
+        {
+            byte[] obfuscatedSalt = new byte[BaseSalt.Length];
+            Buffer.BlockCopy(BaseSalt, 0, obfuscatedSalt, 0, BaseSalt.Length);
+            for (int i = 0; i < obfuscatedSalt.Length; i++)
+            {  
+                obfuscatedSalt[i] ^= ObfuscationKey[i % ObfuscationKey.Length];
+                obfuscatedSalt[i] = (byte)((obfuscatedSalt[i] >> 3) | (obfuscatedSalt[i] << 5));
+            }
+            return Convert.ToBase64String(obfuscatedSalt);
+        }
+
     }
 }
