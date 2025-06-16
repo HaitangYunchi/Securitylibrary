@@ -1,77 +1,97 @@
-# SecurityLibrary.dll Ê¹ÓÃÊÖ²á
+# SecurityLibrary.dll ä½¿ç”¨æ‰‹å†Œ
 
-Ê×ÏÈ³ÌĞò¼¯ÒıÓÃ SecurityLibrary.dll ²¢ÔÚ³ÌĞòÓÃ using SecurityLibrary;
-Èç¹ûÊ¹ÓÃÖĞ±¨´í£¬ÇëÊ¹ÓÃÏàÍ¬µÄ·½Ê½ÒıÓÃ Newtonsoft.Json.dll
-°²È«ÎÄ¼şÃûÎ»¹Ì¶¨Ãû³Æ£ºSeccurity.enc
+é¦–å…ˆç¨‹åºé›†å¼•ç”¨ SecurityLibrary.dll å¹¶åœ¨ç¨‹åºç”¨ using SecurityLibrary;
+å¦‚æœä½¿ç”¨ä¸­æŠ¥é”™ï¼Œè¯·ä½¿ç”¨ç›¸åŒçš„æ–¹å¼å¼•ç”¨ Newtonsoft.Json.dll
+å®‰å…¨æ–‡ä»¶åä½å›ºå®šåç§°ï¼šSeccurity.enc
 
-ÊµÀı»¯£º
+
+### å®ä¾‹åŒ–ï¼š
+
+```
 Security validator = new();
+```
+è°ƒç”¨æ–¹æ³•ï¼š
+```
+Security.EncryptionKey = "ä½ è·å–åˆ°çš„åŠ å¯†ç›å€¼";	//	è®¾ç½®åŠ å¯†ç›å€¼
+```
 
-µ÷ÓÃ·½·¨£º
-Security.EncryptionKey = "Äã»ñÈ¡µ½µÄ¼ÓÃÜÑÎÖµ";	//	ÉèÖÃ¼ÓÃÜÑÎÖµ
 
-//ÑéÖ¤ ·µ»Ø²¼¶ûÖµ ÓÃ»§ºÍ»úÆ÷ÂëÁ½ÕßÌîĞ´ÆäÒ»¼´¿É£¬»òÕß¶¼ÌîĞ´Ò²ĞĞ£¬Èí¼ş»á×Ô¶¯Ê¶±ğÆäÖĞÒ»Ïî
-var result = validator.Validate(userToCheck: ÄãµÄÈí¼şÓÃ»§,machineToCheck: »úÆ÷Âë); 
+### éªŒè¯ è¿”å›å¸ƒå°”å€¼ ç”¨æˆ·å’Œæœºå™¨ç ä¸¤è€…å¡«å†™å…¶ä¸€å³å¯ï¼Œæˆ–è€…éƒ½å¡«å†™ä¹Ÿè¡Œï¼Œè½¯ä»¶ä¼šè‡ªåŠ¨è¯†åˆ«å…¶ä¸­ä¸€é¡¹
 
-µ÷ÓÃÊµÀı£º
+```
+var result = validator.Validate(userToCheck: ä½ çš„è½¯ä»¶ç”¨æˆ·,machineToCheck: æœºå™¨ç ); 
+```
+è°ƒç”¨å®ä¾‹ï¼š
+```
 private void btnValidate_Click(object sender, EventArgs e)
 {
-    // ÊäÈëÑéÖ¤
+    // è¾“å…¥éªŒè¯
     if (string.IsNullOrWhiteSpace(txtUser.Text) && string.IsNullOrWhiteSpace(txtMachine.Text))
     {
-        MessageBox.Show("ÇëÊäÈëÑéÖ¤ĞÅÏ¢", "ÌáÊ¾",MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        MessageBox.Show("è¯·è¾“å…¥éªŒè¯ä¿¡æ¯", "æç¤º",MessageBoxButtons.OK, MessageBoxIcon.Warning);
         return;
     }
 
     var result = validator.Validate(
         userToCheck: txtUser.Text,
         machineToCheck: txtMachine.Text);           
-    // Èç¹ûÑéÖ¤Ê§°Ü£¬ÍË³ö³ÌĞò
+    // å¦‚æœéªŒè¯å¤±è´¥ï¼Œé€€å‡ºç¨‹åº
     if (!result.IsValid)
     {
-        MessageBox.Show(result.Message, result.IsValid ? "ÑéÖ¤Í¨¹ı" : "ÑéÖ¤Ê§°Ü", MessageBoxButtons.OK, result.IsValid ? MessageBoxIcon.Information : MessageBoxIcon.Error);
-        MessageBox.Show("´Ë´¦ÊÇÑéÖ¤²»Í¨¹ı»òÕß¹ÜÀíÔ±½ûÓÃÕâ¸öÈí¼şÊ±²Å¿´µ½µÄºóĞø³ÌĞò\nÑéÖ¤³ÌĞò¿ÉÒÔÔÚÈí¼şÆô¶¯Ê±¼ÓÔØ", "ÌáÊ¾", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        MessageBox.Show(result.Message, result.IsValid ? "éªŒè¯é€šè¿‡" : "éªŒè¯å¤±è´¥", 
+MessageBoxButtons.OK, result.IsValid ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+        MessageBox.Show("æ­¤å¤„æ˜¯éªŒè¯ä¸é€šè¿‡æˆ–è€…ç®¡ç†å‘˜ç¦ç”¨è¿™ä¸ªè½¯ä»¶æ—¶æ‰çœ‹åˆ°çš„åç»­ç¨‹åº\néªŒè¯ç¨‹åºå¯ä»¥åœ¨è½¯ä»¶å¯åŠ¨æ—¶åŠ è½½", "æç¤º", 
+MessageBoxButtons.OK, MessageBoxIcon.Warning);
         return;
-        Application.Exit();   // Èç¹û½ûÖ¹ºó×Ô¶¯ÍË³öÈí¼ş,Çë×¢ÊÍµôÉÏÃæµÄreturn
+        Application.Exit();   // å¦‚æœç¦æ­¢åè‡ªåŠ¨é€€å‡ºè½¯ä»¶,è¯·æ³¨é‡Šæ‰ä¸Šé¢çš„return
     }
-    MessageBox.Show("´Ë´¦ÊÇÑéÖ¤Í¨¹ıºóµÄºóĞøÖ´ĞĞ´úÂë£¬ÑéÖ¤³ÌĞò¿ÉÒÔÔÚÈí¼şÆô¶¯Ê±¼ÓÔØ¡£", "ÌáÊ¾", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    MessageBox.Show("æ­¤å¤„æ˜¯éªŒè¯é€šè¿‡åçš„åç»­æ‰§è¡Œä»£ç ï¼ŒéªŒè¯ç¨‹åºå¯ä»¥åœ¨è½¯ä»¶å¯åŠ¨æ—¶åŠ è½½ã€‚", "æç¤º", 
+MessageBoxButtons.OK, MessageBoxIcon.Information);
 }
+```
 
-//¶ÁÈ¡°²È«ÎÄ¼şÁĞ±í ·µ»ØÊı×é
+### è¯»å–å®‰å…¨æ–‡ä»¶åˆ—è¡¨ è¿”å›æ•°ç»„
+
+```
 var (users, machines, isEnabled) = validator.ReadSecuritylist();
-
-µ÷ÓÃÊµÀı£º
+```
+è°ƒç”¨å®ä¾‹ï¼š
+```
 private void LoadSecuritylist()
 {
     try
     {
         var (users, machines, isEnabled) = validator.ReadSecuritylist();
 
-        // ½«¶ÁÈ¡µÄÊı¾İÏÔÊ¾µ½¶ÔÓ¦ÎÄ±¾¿ò
+        // å°†è¯»å–çš„æ•°æ®æ˜¾ç¤ºåˆ°å¯¹åº”æ–‡æœ¬æ¡†
         txtUsers.Text = string.Join(Environment.NewLine, users);
         txtMachines.Text = string.Join(Environment.NewLine, machines);
         chkEnabled.Checked = isEnabled;
 
-        statusLabel.Text = "°²È«ÎÄ¼ş¼ÓÔØ³É¹¦";
+        statusLabel.Text = "å®‰å…¨æ–‡ä»¶åŠ è½½æˆåŠŸ";
     }
     catch (Exception ex)
     {
-        // ÎÄ¼ş²»´æÔÚÊ±ÏÔÊ¾¿ÕÄÚÈİ£¬ÆäËû´íÎóÏÔÊ¾ÌáÊ¾
+        // æ–‡ä»¶ä¸å­˜åœ¨æ—¶æ˜¾ç¤ºç©ºå†…å®¹ï¼Œå…¶ä»–é”™è¯¯æ˜¾ç¤ºæç¤º
         if (!(ex is System.IO.FileNotFoundException))
         {
-            MessageBox.Show($"¼ÓÔØ°²È«ÎÄ¼şÊ§°Ü: {ex.Message}", "´íÎó", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show($"åŠ è½½å®‰å…¨æ–‡ä»¶å¤±è´¥: {ex.Message}", "é”™è¯¯", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
-        statusLabel.Text = "Î´·¢ÏÖ°²È«ÎÄ¼ş£¡";
+        statusLabel.Text = "æœªå‘ç°å®‰å…¨æ–‡ä»¶ï¼";
     }
 }
+```
 
-// Éú³É°²È«ÎÄ¼ş
- bool success = validator.GenerateSecuritylist(disabledUsers: ÓÃ»§Êı×é,disabledMachines: »úÆ÷ÂëÊı×é,enableSoftware: ÊÇ·ñÆôÓÃ);
+### ç”Ÿæˆå®‰å…¨æ–‡ä»¶
 
- µ÷ÓÃÊµÀı£º
- private void btnGenerate_Click(object sender, EventArgs e)
+```
+ bool success = validator.GenerateSecuritylist(disabledUsers: ç”¨æˆ·æ•°ç»„,disabledMachines: æœºå™¨ç æ•°ç»„,enableSoftware: æ˜¯å¦å¯ç”¨);
+```
+è°ƒç”¨å®ä¾‹ï¼š
+```
+private void btnGenerate_Click(object sender, EventArgs e)
 {
-    // ´¦ÀíÓÃ»§ÊäÈë - °´ĞĞ·Ö¸î²¢È¥³ı¿Õ°×Ïî
+    // å¤„ç†ç”¨æˆ·è¾“å…¥ - æŒ‰è¡Œåˆ†å‰²å¹¶å»é™¤ç©ºç™½é¡¹
     var users = txtUsers.Text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
         .Select(u => u.Trim())
         .Where(u => !string.IsNullOrEmpty(u))
@@ -82,23 +102,24 @@ private void LoadSecuritylist()
         .Where(m => !string.IsNullOrEmpty(m))
         .ToArray();
 
-    // µ÷ÓÃDLLÉú³É°²È«ÎÄ¼ş
+    // è°ƒç”¨DLLç”Ÿæˆå®‰å…¨æ–‡ä»¶
     bool success = validator.GenerateSecuritylist(
         disabledUsers: users,
         disabledMachines: machines,
         enableSoftware: chkEnabled.Checked);
 
-    // ÏÔÊ¾²Ù×÷½á¹û
+    // æ˜¾ç¤ºæ“ä½œç»“æœ
     if (success)
     {
-        statusLabel.Text = "°²È«ÎÄ¼şÉú³É³É¹¦";
-        MessageBox.Show($"°²È«ÎÄ¼şÉú³É³É¹¦!{Environment.NewLine}ÎÄ¼şÒÑ±£´æÎªSeccurity.enc",
-            "³É¹¦", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        statusLabel.Text = "å®‰å…¨æ–‡ä»¶ç”ŸæˆæˆåŠŸ";
+        MessageBox.Show($"å®‰å…¨æ–‡ä»¶ç”ŸæˆæˆåŠŸ!{Environment.NewLine}æ–‡ä»¶å·²ä¿å­˜ä¸ºSeccurity.enc",
+            "æˆåŠŸ", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
     else
     {
-        statusLabel.Text = "°²È«ÎÄ¼şÉú³ÉÊ§°Ü";
-        MessageBox.Show("°²È«ÎÄ¼şÉú³ÉÊ§°Ü",
-            "´íÎó", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        statusLabel.Text = "å®‰å…¨æ–‡ä»¶ç”Ÿæˆå¤±è´¥";
+        MessageBox.Show("å®‰å…¨æ–‡ä»¶ç”Ÿæˆå¤±è´¥",
+            "é”™è¯¯", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
 }
+```
