@@ -67,9 +67,18 @@ namespace SecurityLibrary
         }
 
         /// <summary>
-        /// 验证指定用户和/或机器是否在安全文件中
+        /// 验证黑名单用户和/或机器是否在安全文件中
+        /// 如果用户或机器在黑名单中，则拒绝访问
         /// </summary>
-        public (bool IsValid, string Message) Validate(string userToCheck = null, string machineToCheck = null, string filePath = "Seccurity.enc")
+        /// <param name="userToCheck">要验证的用户名</param>
+        /// <param name="machineToCheck">要验证的机器码</param>
+        /// <param name="filePath">安全文件路径，默认为"Seccurity.enc"</param>
+        /// <returns>
+        /// 返回元组 (IsValid, Message):
+        /// - IsValid: 验证是否通过
+        /// - Message: 验证结果消息
+        /// </returns>
+        public (bool IsValid, string Message) blacklist(string userToCheck = null, string machineToCheck = null, string filePath = "Seccurity.enc")
         {
             try
             {
@@ -81,11 +90,33 @@ namespace SecurityLibrary
                 if (!isEnabled)
                     return (false, "软件已被管理员禁用");
 
-                if (!string.IsNullOrWhiteSpace(userToCheck) && users.Contains(userToCheck, StringComparer.OrdinalIgnoreCase))
-                    return (false, $"用户 '{userToCheck}' 被禁止使用");
+                bool userBlacklisted = !string.IsNullOrWhiteSpace(userToCheck) &&
+                                     users.Contains(userToCheck, StringComparer.OrdinalIgnoreCase);
+                bool machineBlacklisted = !string.IsNullOrWhiteSpace(machineToCheck) &&
+                                         machines.Contains(machineToCheck, StringComparer.OrdinalIgnoreCase);
 
-                if (!string.IsNullOrWhiteSpace(machineToCheck) && machines.Contains(machineToCheck, StringComparer.OrdinalIgnoreCase))
-                    return (false, $"机器码 '{machineToCheck}' 被禁止使用");
+                // 两个都验证的情况
+                if (!string.IsNullOrWhiteSpace(userToCheck) && !string.IsNullOrWhiteSpace(machineToCheck))
+                {
+                    if (userBlacklisted && machineBlacklisted)
+                        return (false, $"用户 '{userToCheck}' 和机器码 '{machineToCheck}' 均被禁止使用");
+                    if (userBlacklisted)
+                        return (false, $"用户 '{userToCheck}' 被禁止使用");
+                    if (machineBlacklisted)
+                        return (false, $"机器码 '{machineToCheck}' 被禁止使用");
+                }
+                // 只验证用户名的情况
+                else if (!string.IsNullOrWhiteSpace(userToCheck))
+                {
+                    if (userBlacklisted)
+                        return (false, $"用户 '{userToCheck}' 被禁止使用");
+                }
+                // 只验证机器码的情况
+                else
+                {
+                    if (machineBlacklisted)
+                        return (false, $"机器码 '{machineToCheck}' 被禁止使用");
+                }
 
                 return (true, "验证通过");
             }
@@ -94,6 +125,67 @@ namespace SecurityLibrary
                 return (false, $"验证错误: {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// 验证白名单用户和/或机器是否在安全文件中
+        /// 只有用户或机器在白名单中，才允许访问
+        /// </summary>
+        /// <param name="userToCheck">要验证的用户名</param>
+        /// <param name="machineToCheck">要验证的机器码</param>
+        /// <param name="filePath">安全文件路径，默认为"Seccurity.enc"</param>
+        /// <returns>
+        /// 返回元组 (IsValid, Message):
+        /// - IsValid: 验证是否通过
+        /// - Message: 验证结果消息
+        /// </returns>
+        public (bool IsValid, string Message) Whitelist(string userToCheck = null, string machineToCheck = null, string filePath = "Seccurity.enc")
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(userToCheck) && string.IsNullOrWhiteSpace(machineToCheck))
+                    return (false, "必须指定要验证的用户名或机器码");
+
+                var (users, machines, isEnabled) = ReadSecuritylist(filePath);
+
+                if (!isEnabled)
+                    return (false, "软件已被管理员禁用");
+
+                bool userWhitelisted = string.IsNullOrWhiteSpace(userToCheck) ||
+                                     users.Contains(userToCheck, StringComparer.OrdinalIgnoreCase);
+                bool machineWhitelisted = string.IsNullOrWhiteSpace(machineToCheck) ||
+                                         machines.Contains(machineToCheck, StringComparer.OrdinalIgnoreCase);
+
+                // 两个都验证的情况
+                if (!string.IsNullOrWhiteSpace(userToCheck) && !string.IsNullOrWhiteSpace(machineToCheck))
+                {
+                    if (!userWhitelisted && !machineWhitelisted)
+                        return (false, $"用户 '{userToCheck}' 和机器码 '{machineToCheck}' 均未授权");
+                    if (!userWhitelisted)
+                        return (false, $"用户 '{userToCheck}' 未授权");
+                    if (!machineWhitelisted)
+                        return (false, $"机器码 '{machineToCheck}' 未授权");
+                }
+                // 只验证用户名的情况
+                else if (!string.IsNullOrWhiteSpace(userToCheck))
+                {
+                    if (!userWhitelisted)
+                        return (false, $"用户 '{userToCheck}' 未授权");
+                }
+                // 只验证机器码的情况
+                else
+                {
+                    if (!machineWhitelisted)
+                        return (false, $"机器码 '{machineToCheck}' 未授权");
+                }
+
+                return (true, "验证通过");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"验证错误: {ex.Message}");
+            }
+        }
+
 
         /// <summary>
         /// 生成安全文件
