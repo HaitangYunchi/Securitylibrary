@@ -1,8 +1,10 @@
 # SecurityLibrary.dll 使用手册
 
 首先程序集引用 SecurityLibrary.dll 并在程序用 using SecurityLibrary;
+
 如果使用中报错，请使用相同的方式引用 Newtonsoft.Json.dll
-安全文件名位固定名称：Seccurity.enc
+
+安全文件固定名称：Seccurity.enc
 
 
 ### 实例化：
