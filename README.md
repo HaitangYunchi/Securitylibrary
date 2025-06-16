@@ -45,7 +45,8 @@ MessageBoxButtons.OK, result.IsValid ? MessageBoxIcon.Information : MessageBoxIc
         MessageBox.Show("此处是验证不通过或者管理员禁用这个软件时才看到的后续程序\n验证程序可以在软件启动时加载", "提示", 
 MessageBoxButtons.OK, MessageBoxIcon.Warning);
         return;
-        Application.Exit();   // 如果禁止后自动退出软件,请注释掉上面的return
+        Application.Exit();   // 因为有return，所以这段不执行，因为是Dome，我就没注释掉，
+                              // 如果禁止后自动退出软件,请注释掉上面的return
     }
     MessageBox.Show("此处是验证通过后的后续执行代码，验证程序可以在软件启动时加载。", "提示", 
 MessageBoxButtons.OK, MessageBoxIcon.Information);
