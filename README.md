@@ -155,7 +155,7 @@ private void LoadSecuritylist()
 ### 生成安全文件
 
 ```
- bool success = validator.GenerateSecuritylist(disabledUsers: 用户数组,disabledMachines: 机器码数组,enableSoftware: 是否启用);
+ bool success = validator.GenerateSecuritylist(AllowedUsers: 用户数组,AllowedMachines: 机器码数组,enableSoftware: 是否启用);
 ```
 调用实例：
 ```
@@ -174,8 +174,8 @@ private void btnGenerate_Click(object sender, EventArgs e)
 
     // 调用DLL生成安全文件
     bool success = validator.GenerateSecuritylist(
-        disabledUsers: users,
-        disabledMachines: machines,
+        AllowedUsers: users,
+        AllowedMachines: machines,
         enableSoftware: chkEnabled.Checked);
 
     // 显示操作结果

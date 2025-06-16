@@ -39,8 +39,8 @@ namespace SecurityLibrary
         /// </summary>
         public class SecuritylistSettings
         {
-            public string[] DisabledUsers { get; set; } = [];
-            public string[] DisabledMachines { get; set; } = [];
+            public string[] AllowedUsers { get; set; } = [];
+            public string[] AllowedMachines { get; set; } = [];
             public bool EnableSoftware { get; set; } = true;
             public string Checksum { get; set; } = string.Empty;
         }
@@ -63,7 +63,7 @@ namespace SecurityLibrary
             if (!ValidateChecksum(settings))
                 throw new InvalidDataException("安全文件数据已被篡改");
 
-            return (settings.DisabledUsers, settings.DisabledMachines, settings.EnableSoftware);
+            return (settings.AllowedUsers, settings.AllowedMachines, settings.EnableSoftware);
         }
 
         /// <summary>
@@ -190,9 +190,14 @@ namespace SecurityLibrary
         /// <summary>
         /// 生成安全文件
         /// </summary>
+        /// <param name="AllowedUsers:数组变量">用户名变量数组</param>
+        /// <param name="AllowedMachines:数组变量">机器码数组</param>
+        /// <param name="enableSoftware:true or false">是否启用</param>
+        /// <param name="outputPath">安全文件路径，默认为"Seccurity.enc"</param>
+        /// <returns>
         public bool GenerateSecuritylist(
-            string[] disabledUsers,
-            string[] disabledMachines,
+            string[] AllowedUsers,
+            string[] AllowedMachines,
             bool enableSoftware,
             string outputPath = "Seccurity.enc")
         {
@@ -200,8 +205,8 @@ namespace SecurityLibrary
             {
                 var settings = new SecuritylistSettings
                 {
-                    DisabledUsers = disabledUsers ?? Array.Empty<string>(),
-                    DisabledMachines = disabledMachines ?? Array.Empty<string>(),
+                    AllowedUsers = AllowedUsers ?? Array.Empty<string>(),
+                    AllowedMachines = AllowedMachines ?? Array.Empty<string>(),
                     EnableSoftware = enableSoftware
                 };
 
@@ -223,8 +228,8 @@ namespace SecurityLibrary
 
         private string ComputeSettingsChecksum(SecuritylistSettings settings)
         {
-            string data = string.Join(",", settings.DisabledUsers) +
-                         string.Join(",", settings.DisabledMachines) +
+            string data = string.Join(",", settings.AllowedUsers) +
+                         string.Join(",", settings.AllowedMachines) +
                          settings.EnableSoftware.ToString();
             return CryptoHelper.ComputeHash(data);
         }
