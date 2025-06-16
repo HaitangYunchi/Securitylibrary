@@ -29,7 +29,7 @@ namespace SecurityLibrary
     /// </summary>
     public static class CryptoHelper
     {
-        private static readonly byte[] Salt = [0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64];
+        private static readonly byte[] Salt = [0x48, 0x61, 0x69, 0x54, 0x61, 0x6E, 0x67, 0x59, 0x75, 0x6E, 0x63, 0x68, 0x69, 0x53, 0x61, 0x76];
         private const int Iterations = 1000;
 
         /// <summary>
@@ -40,9 +40,15 @@ namespace SecurityLibrary
             byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
 
             using Aes aes = Aes.Create();
-            using var key = new Rfc2898DeriveBytes(passPhrase, Salt, Iterations);
-            aes.Key = key.GetBytes(32);
-            aes.IV = key.GetBytes(16);
+            byte[] keyMaterial = Rfc2898DeriveBytes.Pbkdf2(
+                password: Encoding.UTF8.GetBytes(passPhrase),
+                salt: Salt,
+                iterations: Iterations,
+                hashAlgorithm: HashAlgorithmName.SHA256,
+                outputLength: 48); // 32字节密钥 + 16字节IV = 48字节
+
+            aes.Key = keyMaterial.AsSpan(0, 32).ToArray();
+            aes.IV = keyMaterial.AsSpan(32, 16).ToArray();
 
             using MemoryStream ms = new();
             using (CryptoStream cs = new(ms, aes.CreateEncryptor(), CryptoStreamMode.Write))
@@ -60,9 +66,15 @@ namespace SecurityLibrary
             byte[] cipherBytes = Convert.FromBase64String(cipherText);
 
             using Aes aes = Aes.Create();
-            using var key = new Rfc2898DeriveBytes(passPhrase, Salt, Iterations);
-            aes.Key = key.GetBytes(32);
-            aes.IV = key.GetBytes(16);
+            byte[] keyMaterial = Rfc2898DeriveBytes.Pbkdf2(
+                password: Encoding.UTF8.GetBytes(passPhrase),
+                salt: Salt,
+                iterations: Iterations,
+                hashAlgorithm: HashAlgorithmName.SHA256,
+                outputLength: 48); // 32字节密钥 + 16字节IV = 48字节
+
+            aes.Key = keyMaterial.AsSpan(0, 32).ToArray();
+            aes.IV = keyMaterial.AsSpan(32, 16).ToArray();
 
             using MemoryStream ms = new();
             using (CryptoStream cs = new(ms, aes.CreateDecryptor(), CryptoStreamMode.Write))

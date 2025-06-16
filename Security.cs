@@ -32,12 +32,12 @@ namespace SecurityLibrary
         /// <summary>
         /// 加密密钥(建议从配置读取)
         /// </summary>
-        public static string EncryptionKey { get; set; } = "HaiTangYunchif&6ag2kFr%#*(&pjjR_gRH-yTutKg3LToV.7TIdOUoUNIkiLI_x";
+        public static string EncryptionKey { get; set; } = "HaiTangYunchif&6ag2kFr%#*(&pjjR_gRH-yTutKg3LToV.7TIdOUoUNIkiLI_x";  //默认盐值，可以后期自定义获取该变量
 
         /// <summary>
         /// 黑名单配置数据结构
         /// </summary>
-        public class BlacklistSettings
+        public class SecuritylistSettings
         {
             public string[] DisabledUsers { get; set; } = [];
             public string[] DisabledMachines { get; set; } = [];
@@ -46,18 +46,18 @@ namespace SecurityLibrary
         }
 
         /// <summary>
-        /// 读取黑名单文件内容
+        /// 读取安全文件内容
         /// </summary>
         /// <param name="filePath">安全文件路径(默认Seccurity.enc)</param>
         /// <returns>包含用户黑名单、机器黑名单和软件启用状态的元组</returns>
-        public (string[] Users, string[] Machines, bool IsEnabled) ReadBlacklist(string filePath = "Seccurity.enc")
+        public (string[] Users, string[] Machines, bool IsEnabled) ReadSecuritylist(string filePath = "Seccurity.enc")
         {
             if (!File.Exists(filePath))
                 throw new FileNotFoundException("安全文件不存在", filePath);
 
             string encryptedJson = File.ReadAllText(filePath);
             string json = CryptoHelper.Decrypt(encryptedJson, EncryptionKey);
-            BlacklistSettings settings = JsonConvert.DeserializeObject<BlacklistSettings>(json)
+            SecuritylistSettings settings = JsonConvert.DeserializeObject<SecuritylistSettings>(json)
                 ?? throw new InvalidDataException("安全文件格式错误");
 
             if (!ValidateChecksum(settings))
@@ -76,7 +76,7 @@ namespace SecurityLibrary
                 if (string.IsNullOrWhiteSpace(userToCheck) && string.IsNullOrWhiteSpace(machineToCheck))
                     return (false, "必须指定要检测的用户名或机器码");
 
-                var (users, machines, isEnabled) = ReadBlacklist(filePath);
+                var (users, machines, isEnabled) = ReadSecuritylist(filePath);
 
                 if (!isEnabled)
                     return (false, "软件已被管理员禁用");
@@ -96,9 +96,9 @@ namespace SecurityLibrary
         }
 
         /// <summary>
-        /// 生成黑名单文件
+        /// 生成安全文件
         /// </summary>
-        public bool GenerateBlacklist(
+        public bool GenerateSecuritylist(
             string[] disabledUsers,
             string[] disabledMachines,
             bool enableSoftware,
@@ -106,7 +106,7 @@ namespace SecurityLibrary
         {
             try
             {
-                var settings = new BlacklistSettings
+                var settings = new SecuritylistSettings
                 {
                     DisabledUsers = disabledUsers ?? Array.Empty<string>(),
                     DisabledMachines = disabledMachines ?? Array.Empty<string>(),
@@ -124,12 +124,12 @@ namespace SecurityLibrary
             }
         }
 
-        private bool ValidateChecksum(BlacklistSettings settings)
+        private bool ValidateChecksum(SecuritylistSettings settings)
         {
             return ComputeSettingsChecksum(settings) == settings.Checksum;
         }
 
-        private string ComputeSettingsChecksum(BlacklistSettings settings)
+        private string ComputeSettingsChecksum(SecuritylistSettings settings)
         {
             string data = string.Join(",", settings.DisabledUsers) +
                          string.Join(",", settings.DisabledMachines) +
