@@ -6,29 +6,58 @@
 
 安全文件固定名称：Seccurity.enc
 
-新增:验证黑白名单，你可以把安全文件当做白名单是有，也可以当做黑名单使用
+新增:验证黑白名单，你可以把安全文件当做白名单使用，也可以当做黑名单使用
 
-修改了其中调用方法，以此来方便调用，
+新增：生成机器码 详情见下面说明 GenerateMachineCode()
 
 
-### 实例化：
+
+### 首先声明实例：
 
 ```
-Security validator = new();
+private string secretKey;
+private Security validator;
 ```
-调用方法：
+在主代码头部实例化：
 ```
-// 设置加密盐值，可以从配置文件读取更安全
-Security.EncryptionKey = "你获取到的加密盐值";	
+secretKey = KeyManager.LoadKey();       // 你的秘钥获取方法
+security = new Security(secretKey);     // 实例化安全库
 ```
+调用实例
 
+```
+using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Management;
+using System.Windows.Forms;
+using SecurityLibrary;  // 程序集引用后，这里 using 引用一下
+
+namespace MyApp
+{
+    public partial class From1 : Form
+    {
+        private string secretKey;
+        private Security security;
+        
+        public From1()
+        {         
+            InitializeComponent();        
+            secretKey = KeyManager.LoadKey();
+            security = new Security(secretKey);  
+            
+        }
+    }
+    //后续业务代码方法...
+}
+```
 
 ### 黑名单验证 返回布尔值 
 
 用户和机器码两者填写其一即可，或者都填写也行，软件会自动识别其中一项
 
 ```
-var result = validator.Blacklist(userToCheck: 你的软件用户,machineToCheck: 机器码); 
+var result = seccurity.Blacklist(userToCheck: 你的软件用户,machineToCheck: 机器码); 
 ```
 调用实例：
 ```
@@ -37,7 +66,7 @@ private void btnBlacklistValidate_Click(object sender, EventArgs e)
     try
     {
         // 首先检查软件是否启用
-        var (_, _, isEnabled) = validator.ReadSecuritylist();
+        var (_, _, isEnabled) = seccurity.ReadSecuritylist();
         if (!isEnabled)
         {
             MessageBox.Show("软件已被管理员禁用", "系统禁用", 
@@ -56,7 +85,7 @@ private void btnBlacklistValidate_Click(object sender, EventArgs e)
         }
 
         // 调用黑名单验证
-        var result = validator.blacklist(
+        var result = seccurity.blacklist(
             userToCheck: string.IsNullOrWhiteSpace(txtUser.Text) ? null : txtUser.Text.Trim(),
             machineToCheck: string.IsNullOrWhiteSpace(txtMachine.Text) ? null : txtMachine.Text.Trim());
 
@@ -90,7 +119,7 @@ private void btnBlacklistValidate_Click(object sender, EventArgs e)
 用户和机器码两者填写其一即可，或者都填写也行，软件会自动识别其中一项
 
 ```
-var result = validator.Whitelist(userToCheck: 你的软件用户,machineToCheck: 机器码); 
+var result = seccurity.Whitelist(userToCheck: 你的软件用户,machineToCheck: 机器码); 
 ```
 调用实例：
 ```
@@ -99,7 +128,7 @@ private void btnWhitelistValidate_Click(object sender, EventArgs e)
     try
     {
         // 首先检查软件是否启用
-        var (_, _, isEnabled) = validator.ReadSecuritylist();
+        var (_, _, isEnabled) = seccurity.ReadSecuritylist();
         if (!isEnabled)
         {
             MessageBox.Show("软件已被管理员禁用", "系统禁用", 
@@ -118,7 +147,7 @@ private void btnWhitelistValidate_Click(object sender, EventArgs e)
         }
 
         // 调用白名单验证
-        var result = validator.Whitelist(
+        var result = seccurity.Whitelist(
             userToCheck: string.IsNullOrWhiteSpace(txtUser.Text) ? null : txtUser.Text.Trim(),
             machineToCheck: string.IsNullOrWhiteSpace(txtMachine.Text) ? null : txtMachine.Text.Trim());
 
@@ -150,7 +179,7 @@ private void btnWhitelistValidate_Click(object sender, EventArgs e)
 ### 读取安全文件列表 返回数组
 
 ```
-var (users, machines, isEnabled) = validator.ReadSecuritylist();
+var (users, machines, isEnabled) = seccurity.ReadSecuritylist();
 ```
 调用实例：
 ```
@@ -158,7 +187,7 @@ private void LoadSecuritylist()
 {
     try
     {
-        var (users, machines, isEnabled) = validator.ReadSecuritylist();
+        var (users, machines, isEnabled) = seccurity.ReadSecuritylist();
 
         // 将读取的数据显示到对应文本框
         txtUsers.Text = string.Join(Environment.NewLine, users);
@@ -184,7 +213,7 @@ private void LoadSecuritylist()
 ### 生成安全文件
 
 ```
- bool success = validator.GenerateSecuritylist(AllowedUsers: 用户数组,
+ bool success = seccurity.GenerateSecuritylist(AllowedUsers: 用户数组,
                 AllowedMachines: 机器码数组,
                 enableSoftware: 是否启用);
 ```
@@ -206,7 +235,7 @@ private void btnGenerate_Click(object sender, EventArgs e)
         .ToArray();
 
     // 调用DLL生成安全文件
-    bool success = validator.GenerateSecuritylist(
+    bool success = seccurity.GenerateSecuritylist(
         AllowedUsers: users,
         AllowedMachines: machines,
         enableSoftware: chkEnabled.Checked);
@@ -228,3 +257,30 @@ private void btnGenerate_Click(object sender, EventArgs e)
     }
 }
 ```
+### 生成机器码 返回 64字符串（256位哈希值）
+
+采用 主板序列号 + CPU + 第一块硬盘序列号 + 主网卡MAC + 秘钥
+
+
+调用方法
+```
+string MachineCode = seccurity.GenerateMachineCode("秘钥");
+```
+调用实例
+```
+static void Main(string[] args)
+{
+	string MachineCode = seccurity.GenerateMachineCode(secretKey);
+	Console.WriteLine(MachineCode);
+}
+
+输出结果：D59DFDB186CC7D5C43CB9F331E2430C5047035BE7E459C812AD7834D3B9E9223
+        BD5BE69FF4EC4170402E802E7F7B710F2BBCD559CC5BDE3B5596526970949D26
+        FBCFA1DF3F305431429027FF2F63C9525A077F62DD242CD4D25B8103AD9ADB23
+实验秘钥不同，机器码不同，保证绝对唯一性
+```
+根据生日问题公式计算：$P \approx 1 - e^{-k^2 / (2N)}$
+
+$k = 10^6$    $P \approx 1.4 \times 10^{-71}$   100万台设备，碰撞概率几乎为0。
+
+$k = 10^18$   $P \approx 1.4 \times 10^{-35}$   即使有百亿亿设备，碰撞概率仍可忽略不计。

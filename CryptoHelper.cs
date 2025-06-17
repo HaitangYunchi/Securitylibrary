@@ -31,8 +31,7 @@ namespace SecurityLibrary
     {
         private static readonly byte[] Salt = [0x48, 0x61, 0x69, 0x54, 0x61, 0x6E, 0x67, 0x59, 0x75, 0x6E, 0x63, 0x68, 0x69, 0x53, 0x61, 0x76];
         private const int Iterations = 1000;
-        private static readonly byte[] BaseSalt = GenerateBaseSalt();
-        private static readonly byte[] ObfuscationKey = Encoding.UTF8.GetBytes("@6@jS~wI)h4MwWViajOom)tMvJ#E%8es");
+        //private static readonly byte[] ObfuscationKey = Encoding.UTF8.GetBytes("@6@jS~wI)h4MwWViajOom)tMvJ#E%8es");
 
         /// <summary>
         /// 加密字符串
@@ -86,7 +85,9 @@ namespace SecurityLibrary
             return Encoding.UTF8.GetString(ms.ToArray());
         }
 
-        //计算SHA256哈希值      
+        /// <summary>
+        /// 计算SHA256哈希值
+        /// </summary>
         public static string ComputeHash(string input)
         {
             if (input == null)
@@ -115,34 +116,12 @@ namespace SecurityLibrary
                 var hexString = new StringBuilder(hashBytes.Length * 2);
                 foreach (byte b in hashBytes)
                 {
-                    hexString.Append(b.ToString("x2")); // 保证小写
+                    hexString.Append(b.ToString("X2")); // 保证小写
                 }
 
                 return hexString.ToString();
             }
         }
-
-        private static byte[] GenerateBaseSalt()
-        {
-            byte[] salt = new byte[48];
-            for (int i = 0; i < 48; i++)
-            {
-                salt[i] = (byte)((i * 31 + 7) % 256); // 确定性模式
-            }
-            return salt;
-        }
-
-        public static string GetBase64Fixed64CharString()
-        {
-            byte[] obfuscatedSalt = new byte[BaseSalt.Length];
-            Buffer.BlockCopy(BaseSalt, 0, obfuscatedSalt, 0, BaseSalt.Length);
-            for (int i = 0; i < obfuscatedSalt.Length; i++)
-            {  
-                obfuscatedSalt[i] ^= ObfuscationKey[i % ObfuscationKey.Length];
-                obfuscatedSalt[i] = (byte)((obfuscatedSalt[i] >> 3) | (obfuscatedSalt[i] << 5));
-            }
-            return Convert.ToBase64String(obfuscatedSalt);
-        }
-
+       
     }
 }
