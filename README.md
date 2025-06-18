@@ -290,6 +290,10 @@ static void Main(string[] args)
 ```
 根据公式计算：<img src="https://latex.codecogs.com/gif.image?\dpi{200}$P&space;\approx&space;1&space;-&space;e^{-k^2&space;/&space;(2N)}$" />
 
-$k = 10^6$    $P \approx 1.4 \times 10^{-71}$   100万台设备，碰撞概率几乎为0。
+| 输入数量（k）      | 碰撞概率（P）    | 概率说明      |
+|:-----------|:-----------:|-----------:|
+| <img src="https://latex.codecogs.com/gif.image?\dpi{100}$k&space;=&space;10^6$" />      | <img src="https://latex.codecogs.com/gif.image?\dpi{100}$P&space;\approx&space;4.3&space;\times&space;10^{-66}$" />      | 100万台设备，碰撞概率几乎为0。      |
+| <img src="https://latex.codecogs.com/gif.image?\dpi{100}$k&space;=&space;10^{12}$" />      | <img src="https://latex.codecogs.com/gif.image?\dpi{100}$P&space;\approx&space;4.3&space;\times&space;10^{-52}$" />      | 100亿台设备，碰撞概率几乎为0。      |
+| <img src="https://latex.codecogs.com/gif.image?\dpi{100}$k&space;=&space;10^{18}$" />      | <img src="https://latex.codecogs.com/gif.image?\dpi{100}$P&space;\approx&space;4.3&space;\times&space;10^{-42}$" />      | 即使有百亿亿设备，碰撞概率仍可忽略不计。      |
 
-$k = 10^18$   $P \approx 1.4 \times 10^{-35}$   即使有百亿亿设备，碰撞概率仍可忽略不计。
+
