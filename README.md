@@ -4,7 +4,7 @@
 
 如果使用中报错，请使用相同的方式引用 Newtonsoft.Json.dll
 
-安全文件固定名称：Seccurity.enc
+安全文件固定名称：Security.enc
 
 新增:验证黑白名单，你可以把安全文件当做白名单使用，也可以当做黑名单使用
 
@@ -16,7 +16,7 @@
 
 ```
 private string secretKey;
-private Security validator;
+private Security security;
 ```
 在主代码头部实例化：
 ```
@@ -63,10 +63,26 @@ namespace MyApp
 
 ### 黑名单验证 返回布尔值 
 
-用户和机器码两者填写其一即可，或者都填写也行，软件会自动识别其中一项
+用户和机器码两者填写其一即可，或者都填写也行，其中安全文件路径不能为空，为空使用默认的文件
 
 ```
-var result = seccurity.Blacklist(userToCheck: 你的软件用户,machineToCheck: 机器码); 
+完整调用
+var result = seccurity.Blacklist(userToCheck: 你的软件用户,machineToCheck: 机器码,filePath: 安全文件路径); 
+
+只验证用户：
+var result = seccurity.Blacklist(userToCheck: 你的软件用户,filePath: 安全文件路径); 
+
+或者使用默认安全文件
+var result = seccurity.Blacklist(userToCheck: 你的软件用户); 
+
+只验证机器码，把上面的userToCheck换成machineToCheck即可
+
+另一种写法
+
+var result = seccurity.Blacklist("你的软件用户","机器码","安全文件路径); 
+
+只验证其中一种(例如机器码)
+var result = seccurity.Blacklist("","机器码","安全文件路径); 
 ```
 调用实例：
 ```
@@ -253,7 +269,7 @@ private void btnGenerate_Click(object sender, EventArgs e)
     if (success)
     {
         statusLabel.Text = "安全文件生成成功";
-        MessageBox.Show($"安全文件生成成功!{Environment.NewLine}文件已保存为 Seccurity.enc","成功", 
+        MessageBox.Show($"安全文件生成成功!{Environment.NewLine}文件已保存为 Security.enc","成功", 
         MessageBoxButtons.OK, 
         MessageBoxIcon.Information);
     }
@@ -290,7 +306,7 @@ static void Main(string[] args)
 ```
 根据公式计算：<img src="https://latex.codecogs.com/gif.image?\dpi{200}$P&space;\approx&space;1&space;-&space;e^{-k^2&space;/&space;(2N)}$" />
 
-其中：<img src="https://latex.codecogs.com/gif.image?\dpi{200}$N&space;=&space;2^{256}&space;\approx&space;1.16&space;\times&space;10^{-77}$" />
+其中：<img src="https://latex.codecogs.com/gif.image?\dpi{150}$N&space;=&space;2^{256}&space;\approx&space;1.16&space;\times&space;10^{-77}$" />
 
 | 输入数量（k）      | 碰撞概率（P）    | 概率说明      |
 |:-----------|:-----------:|-----------:|
