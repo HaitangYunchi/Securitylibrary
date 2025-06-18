@@ -37,18 +37,27 @@ namespace MyApp
 {
     public partial class From1 : Form
     {
-        private string secretKey;
-        private Security security;
-        
-        public From1()
+        // 私有字段声明
+        private string secretKey;       // 存储从安全存储中加载的加密密钥（核心敏感数据）
+        private Security security;      // SecurityLibrary的安全验证实例（核心功能入口）
+
+        public From1()         
         {         
             InitializeComponent();        
+
+            // 加载加密密钥（从安全存储中获取，如配置文件、注册表或硬件保护存储）
+            // KeyManager.LoadKey() 是自定义方法，具体实现可能包括：
+            // - 从加密配置文件读取密钥
+            // - 从Windows DPAPI保护的存储中解密获取
+            // - 从硬件安全模块（HSM）或可信执行环境（TEE）中读取
             secretKey = KeyManager.LoadKey();
+
+            // 初始化安全验证实例（传入加载的密钥）
+            // Security类来自SecurityLibrary，用于后续执行黑白名单验证、机器码生成等操作
             security = new Security(secretKey);  
-            
         }
-    }
-    //后续业务代码方法...
+
+        // 后续业务代码方法...（例如：按钮点击事件、菜单操作、核心业务逻辑等）
 }
 ```
 
@@ -279,7 +288,7 @@ static void Main(string[] args)
         FBCFA1DF3F305431429027FF2F63C9525A077F62DD242CD4D25B8103AD9ADB23
 实验秘钥不同，机器码不同，保证绝对唯一性
 ```
-根据生日问题公式计算：$P \approx 1 - e^{-k^2 / (2N)}$
+根据公式计算：<img src="https://latex.codecogs.com/gif.image?\dpi{200}$P&space;\approx&space;1&space;-&space;^{-k^2&space;/&space;(2N)}$" />
 
 $k = 10^6$    $P \approx 1.4 \times 10^{-71}$   100万台设备，碰撞概率几乎为0。
 

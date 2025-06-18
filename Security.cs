@@ -37,7 +37,6 @@ namespace SecurityLibrary
     public class Security
     {
         private static readonly byte[] Salt = [0x48, 0x61, 0x69, 0x54, 0x61, 0x6E, 0x67, 0x59, 0x75, 0x6E, 0x63, 0x68, 0x69, 0x53, 0x61, 0x76];
-        private const string ChecksumSalt = "HaiTangYunchiFixedChecksumSalt@2025";
         private readonly string _encryptionKey;
 
         /// <summary>
@@ -367,7 +366,7 @@ namespace SecurityLibrary
             string data = string.Join(",", settings.AllowedUsers) +
                          string.Join(",", settings.AllowedMachines) +
                          settings.EnableSoftware.ToString() +
-                         ChecksumSalt;
+                         _encryptionKey;
             return CryptoHelper.ComputeHash(data);
         }
     }
