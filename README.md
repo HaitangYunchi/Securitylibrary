@@ -288,7 +288,7 @@ static void Main(string[] args)
         FBCFA1DF3F305431429027FF2F63C9525A077F62DD242CD4D25B8103AD9ADB23
 实验秘钥不同，机器码不同，保证绝对唯一性
 ```
-根据公式计算：<img src="https://latex.codecogs.com/gif.image?\dpi{200}$P&space;\approx&space;1&space;-&space;^{-k^2&space;/&space;(2N)}$" />
+根据公式计算：<img src="https://latex.codecogs.com/gif.image?\dpi{200}$P&space;\approx&space;1&space;-&space;e^{-k^2&space;/&space;(2N)}$" />
 
 $k = 10^6$    $P \approx 1.4 \times 10^{-71}$   100万台设备，碰撞概率几乎为0。
 
